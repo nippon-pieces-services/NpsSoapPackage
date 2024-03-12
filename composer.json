@@ -1,0 +1,18 @@
+{
+    "name": "npservices/nps-soap",
+    "description": "WEBSERVICE SOAP",
+    "type": "library",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {"NPServices\\NpsSoapPackage\\": "src/"}
+    },
+    "authors": [
+        {
+            "name": "Nippon pieces services",
+            "email": "e.maernhout@nippon-pieces.com"
+        }
+    ],
+    "require": {}
+}
+
