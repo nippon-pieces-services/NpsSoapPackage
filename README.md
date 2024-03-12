@@ -68,13 +68,13 @@ $nps->getAvailability('TEST', $itemsToCheck);
 ### createOrder
 Cette méthode à besoin de 10 paramètres : **(! - Ordre des paramètres à respecter)**
 -   customerId → votre numéro de client commande (**C01XXXXX** ou **CNDXXXXX**)
--   contact → Le nom complet de votre client (‘Alfred Archambault’)
--   phone → Le numéro de téléphone de votre client (‘06.01.02.03.04’)
--   email → L’email de votre client (‘AlfredArchambault@teleworm.us')
--   reference → Une référence à donner à votre commande (‘exempleCommande01’)
+-   contact → Le nom complet de votre client ('Alfred Archambault')
+-   phone → Le numéro de téléphone de votre client ('06.01.02.03.04')
+-   email → L’email de votre client ('example.ex@test.fr')
+-   reference → Une référence à donner à votre commande ('exempleCommande01')
 -   entries → Une liste contenant tout les éléments à commander
--   billingAddress → Une liste contenant les informations de l’adresse de facturations ***(doit contenir les champs suivant : 'name1', 'name2', 'street1', 'street2', 'postalCode', 'city', 'countryIsoCode', 'countryName')***
--   shippingAddress → Une liste contenant les informations de l’adresse de facturations ***(doit contenir les champs suivant : 'name1', 'name2', 'street1', 'street2', 'postalCode', 'city', 'countryIsoCode', 'countryName')***
+-   billingAddress → Une liste contenant les informations de l’adresse de facturations ***(doit contenir les champs suivant : 'societe', 'name1', 'name2', 'street1', 'street2', 'postalCode', 'city', 'countryIsoCode', 'countryName')***
+-   shippingAddress → Une liste contenant les informations de l’adresse de facturations ***(doit contenir les champs suivant : 'societe', 'name1', 'name2', 'street1', 'street2', 'postalCode', 'city', 'countryIsoCode', 'countryName')***
 -   deliveryId → votre numéro d’adresse de livraison (**C00**, **LIVXX** ou **L0099**)
 -   express → Est-ce que c’est une commande express ? (true ou false)
 
@@ -116,7 +116,7 @@ $nps->createOrder(
 	'CNDXXXXX',
 	'Alfred Archambault',
 	'01.52.42.99.41',
-	'AlfredArchambault@teleworm.us',
+	'example.ex@test.fr',
 	'exempleCommande01',
 	$itemsToOrder,
 	$address,

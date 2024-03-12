@@ -113,31 +113,42 @@ class NPS extends \SoapClient
         // the items list can't be empty
         if ($itemsList) {
             foreach ($itemsList as $item) {
-                // Need to have a reference and reference need to be alphanumeric
-                if(!$item['reference'] || !ctype_alnum($item['reference'])){ 
-                    $this->error = 'The reference is invalid';
-                }
-                // Need to have a makerCode and makerCode need to exists
-                if(!$item['makerCode'] || !$this->isMakerCodeExist($item['makerCode'])) {
-                    $this->error = "The 'makerCode' field is invalid";
-                }
-                // Need to have a positionNumber and positionNumber need to be an integer
-                if(!$item['positionNumber'] || !is_int($item['positionNumber'])) {
-                    $this->error = "The 'positionNumber' field is invalid";
-                }
-                // requestedQuantity need to be an integer
-                if(!is_int($item['requestedQuantity'])) {
-                    $this->error = "The 'requestedQuantity' field is invalid";
-                }
 
-                // requestedQuantity can't be equal to 0
-                if($item['requestedQuantity'] == 0) {
-                    $this->error = "The 'requestedQuantity' field only accepts numbers greater than 0";
+                // Verify array with item informations
+                $clesAttendues = array_flip(['reference', 'makerCode', 'positionNumber', 'requestedQuantity']);
+                $difference = array_diff_key($clesAttendues, $item);
+
+                if(empty($difference)) {
+                    // Need to have a reference and reference need to be alphanumeric
+                    if(!$item['reference']){ 
+                        $this->error = 'The reference is invalid';
+                    }
+                    // Need to have a makerCode and makerCode need to exists
+                    if(!$item['makerCode'] || !$this->isMakerCodeExist($item['makerCode']) ) {
+                        $this->error = "The 'makerCode' field is invalid";
+                    }
+                    // Need to have a positionNumber and positionNumber need to be an integer
+                    if(!$item['positionNumber'] || !is_int($item['positionNumber'])) {
+                        $this->error = "The 'positionNumber' field is invalid";
+                    }
+                    // requestedQuantity need to be an integer
+                    if(!is_int($item['requestedQuantity'])) {
+                        $this->error = "The 'requestedQuantity' field is invalid";
+                    }
+
+                    // requestedQuantity can't be equal to 0
+                    if($item['requestedQuantity'] == 0) {
+                        $this->error = "The 'requestedQuantity' field only accepts numbers greater than 0";
+                    }
+                } else {
+                    $missingFieldsImplode = implode("', '", array_keys($difference));
+                    $this->error = "'{$missingFieldsImplode}' field(s) are missing from the items list";
                 }
             }
         } else {
             $this->error = "The items list can not be empty";
         }
+
         if ($this->error) {
             return false;
         } else {
@@ -148,11 +159,13 @@ class NPS extends \SoapClient
     // Verify if makerCode exist
     protected function isMakerCodeExist(string $makerCode) {
         $makerCodes = $this->getMakerCodes();
+        if($makerCode == '*') return true;
         foreach ($makerCodes->getMakerCodes() as $element) {
             if($element->getMakerCode() == $makerCode) {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -189,12 +202,13 @@ class NPS extends \SoapClient
     // Verify array with address informations
     protected function checkCustomerAddress(array $addressInfos)
     {
-        $clesAttendues = array_flip(['name1', 'name2', 'street1', 'street2', 'postalCode', 'city', 'countryIsoCode', 'countryName']);
+        $clesAttendues = array_flip(['societe', 'name1', 'name2', 'street1', 'street2', 'postalCode', 'city', 'countryIsoCode', 'countryName']);
 
         $difference = array_diff_key($clesAttendues, $addressInfos);
 
         if(!empty($difference)) {
-            $this->error = "One or more fields are missing from one of your addresses";
+            $missingFieldsImplode = implode("', '", array_keys($difference));
+            $this->error = "'{$missingFieldsImplode}' field(s) are missing from one of your addresses";
         }
 
         if ($this->error) {

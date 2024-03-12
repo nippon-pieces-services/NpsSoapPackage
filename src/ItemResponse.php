@@ -16,6 +16,7 @@ class ItemResponse {
     private $makerCode;
     private $positionNumber;
     private $requestedQuantity;
+    private $isValid = true;
 
     public function __construct($data) {
         $this->confirmedQuantity = $data->confirmedQuantity;
@@ -27,6 +28,7 @@ class ItemResponse {
         $this->makerCode = $data->makerCode;
         $this->positionNumber = $data->positionNumber;
         $this->requestedQuantity = $data->requestedQuantity;
+        if($data->erpReference == "XINCONNU") $this->isValid = false;
     }
 
     public function getConfirmedQuantity() {
@@ -63,6 +65,10 @@ class ItemResponse {
 
     public function getRequestedQuantity() {
         return $this->requestedQuantity;
+    }
+
+    public function isValid() {
+        return $this->isValid;
     }
 
 }
