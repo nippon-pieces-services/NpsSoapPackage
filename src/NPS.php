@@ -82,7 +82,6 @@ class NPS extends \SoapClient
                 'customerId' => $this->id,
                 'password' => $this->password,
                 'order' => [
-                    'id' => '',
                     'customerId' => $customerId,
                     'contact' => $contact,
                     'phone' => $phone,
@@ -115,8 +114,8 @@ class NPS extends \SoapClient
             foreach ($itemsList as $item) {
 
                 // Verify array with item informations
-                $clesAttendues = array_flip(['reference', 'makerCode', 'positionNumber', 'requestedQuantity']);
-                $difference = array_diff_key($clesAttendues, $item);
+                $requiredFields = array_flip(['reference', 'makerCode', 'positionNumber', 'requestedQuantity']);
+                $difference = array_diff_key($requiredFields, $item);
 
                 if(empty($difference)) {
                     // Need to have a reference and reference need to be alphanumeric
@@ -202,9 +201,9 @@ class NPS extends \SoapClient
     // Verify array with address informations
     protected function checkCustomerAddress(array $addressInfos)
     {
-        $clesAttendues = array_flip(['societe', 'name1', 'name2', 'street1', 'street2', 'postalCode', 'city', 'countryIsoCode', 'countryName']);
+        $requiredFields = array_flip(['name1', 'street1', 'postalCode', 'city', 'countryIsoCode', 'countryName']);
 
-        $difference = array_diff_key($clesAttendues, $addressInfos);
+        $difference = array_diff_key($requiredFields, $addressInfos);
 
         if(!empty($difference)) {
             $missingFieldsImplode = implode("', '", array_keys($difference));

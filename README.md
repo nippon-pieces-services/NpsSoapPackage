@@ -73,8 +73,8 @@ Cette méthode à besoin de 10 paramètres : **(! - Ordre des paramètres à res
 -   email → L’email de votre client ('example.ex@test.fr')
 -   reference → Une référence à donner à votre commande ('exempleCommande01')
 -   entries → Une liste contenant tout les éléments à commander
--   billingAddress → Une liste contenant les informations de l’adresse de facturations ***(doit contenir les champs suivant : 'societe', 'name1', 'name2', 'street1', 'street2', 'postalCode', 'city', 'countryIsoCode', 'countryName')***
--   shippingAddress → Une liste contenant les informations de l’adresse de facturations ***(doit contenir les champs suivant : 'societe', 'name1', 'name2', 'street1', 'street2', 'postalCode', 'city', 'countryIsoCode', 'countryName')***
+-   billingAddress → Une liste contenant les informations de l’adresse de facturations ***(doit contenir au minimum les champs suivant : 'name1', 'street1', 'postalCode', 'city', 'countryIsoCode', 'countryName')***
+-   shippingAddress → Une liste contenant les informations de l’adresse de facturations ***(doit contenir au minimum les champs suivant : 'name1', 'street1', 'postalCode', 'city', 'countryIsoCode', 'countryName')***
 -   deliveryId → votre numéro d’adresse de livraison (**C00**, **LIVXX** ou **L0099**)
 -   express → Est-ce que c’est une commande express ? (true ou false)
 
@@ -113,14 +113,14 @@ $itemsToOrder = [
 Passage de la commande :
 ```php
 $nps->createOrder(
-	'CNDXXXXX',
-	'Alfred Archambault',
-	'01.52.42.99.41',
-	'example.ex@test.fr',
-	'exempleCommande01',
-	$itemsToOrder,
-	$address,
-	$address,
-	'L0099',
-	false
+	'CNDXXXXX', //ID Client
+	'Alfred Archambault', //Contact (Nom complet)
+	'01.52.42.99.41', //Numéro de Téléphone
+	'example.ex@test.fr', //Email
+	'exempleCommande01', //Nom pour votre commande
+	$itemsToOrder, //Liste des éléments a commander
+	$address, //Billing Address
+	$address, //Shipping Address
+	'L0099', //DeliveryId
+	false //Est-ce une livraison express
 );

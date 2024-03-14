@@ -7,6 +7,7 @@
 namespace NPServices\NpsSoapPackage;
 
 class CustomerAddressResponse {
+    private $societe;
     private $name1;
     private $name2;
     private $street1;
@@ -16,6 +17,7 @@ class CustomerAddressResponse {
     private $countryName;
 
     public function __construct($data) {
+        $this->societe = $data->societe;
         $this->name1 = $data->name1;
         $this->name2 = $data->name2;
         $this->street1 = $data->street1;
@@ -23,6 +25,10 @@ class CustomerAddressResponse {
         $this->postalCode = $data->postalCode;
         $this->countryIsoCode = $data->countryIsoCode;
         $this->countryName = $data->countryName;
+    }
+
+    public function getSociete() {
+        return $this->societe;
     }
 
     public function getName1() {
