@@ -112,36 +112,47 @@ class NPS extends \SoapClient
         // the items list can't be empty
         if ($itemsList) {
             foreach ($itemsList as $item) {
+                if (is_array($item)) {
 
-                // Verify array with item informations
-                $requiredFields = array_flip(['reference', 'makerCode', 'positionNumber', 'requestedQuantity']);
-                $difference = array_diff_key($requiredFields, $item);
-
-                if(empty($difference)) {
-                    // Need to have a reference and reference need to be alphanumeric
-                    if(!$item['reference']){ 
-                        $this->error = 'The reference is invalid';
-                    }
-                    // Need to have a makerCode and makerCode need to exists
-                    if(!$item['makerCode'] || !$this->isMakerCodeExist($item['makerCode']) ) {
-                        $this->error = "The 'makerCode' field is invalid";
-                    }
-                    // Need to have a positionNumber and positionNumber need to be an integer
-                    if(!$item['positionNumber'] || !is_int($item['positionNumber'])) {
-                        $this->error = "The 'positionNumber' field is invalid";
-                    }
-                    // requestedQuantity need to be an integer
-                    if(!is_int($item['requestedQuantity'])) {
-                        $this->error = "The 'requestedQuantity' field is invalid";
-                    }
-
-                    // requestedQuantity can't be equal to 0
-                    if($item['requestedQuantity'] == 0) {
-                        $this->error = "The 'requestedQuantity' field only accepts numbers greater than 0";
+                    // Verify array with item informations
+                    $requiredFields = array_flip(['reference', 'makerCode', 'positionNumber', 'requestedQuantity']);
+                    $difference = array_diff_key($requiredFields, $item);
+    
+                    if(empty($difference)) {
+                        // Need to have a reference and reference need to be alphanumeric
+                        if(!$item['reference']){ 
+                            $this->error = 'The reference is invalid';
+                            break;
+                        }
+                        // Need to have a makerCode and makerCode need to exists
+                        if(!$item['makerCode'] || !$this->isMakerCodeExist($item['makerCode']) ) {
+                            $this->error = "The 'makerCode' field is invalid";
+                            break;
+                        }
+                        // Need to have a positionNumber and positionNumber need to be an integer
+                        if(!$item['positionNumber'] || !is_int($item['positionNumber'])) {
+                            $this->error = "The 'positionNumber' field is invalid";
+                            break;
+                        }
+                        // requestedQuantity need to be an integer
+                        if(!is_int($item['requestedQuantity'])) {
+                            $this->error = "The 'requestedQuantity' field is invalid";
+                            break;
+                        }
+    
+                        // requestedQuantity can't be equal to 0
+                        if($item['requestedQuantity'] == 0) {
+                            $this->error = "The 'requestedQuantity' field only accepts numbers greater than 0";
+                            break;
+                        }
+                    } else {
+                        $missingFieldsImplode = implode("', '", array_keys($difference));
+                        $this->error = "'{$missingFieldsImplode}' field(s) are missing from the items list";
+                        break;
                     }
                 } else {
-                    $missingFieldsImplode = implode("', '", array_keys($difference));
-                    $this->error = "'{$missingFieldsImplode}' field(s) are missing from the items list";
+                    $this->error = "Your product array can only contain arrays containing a product's information";
+                    break;
                 }
             }
         } else {
@@ -205,9 +216,16 @@ class NPS extends \SoapClient
 
         $difference = array_diff_key($requiredFields, $addressInfos);
 
-        if(!empty($difference)) {
+        if (!empty($difference)) {
             $missingFieldsImplode = implode("', '", array_keys($difference));
             $this->error = "'{$missingFieldsImplode}' field(s) are missing from one of your addresses";
+        } else {
+            foreach ($addressInfos as $field => $value) {
+                if (!is_string($value)) {
+                    $this->error = "The '{$field}' field must be a string.";
+                    break;
+                }
+            }
         }
 
         if ($this->error) {
@@ -216,5 +234,4 @@ class NPS extends \SoapClient
             return true;
         }
     }
-    
 }
