@@ -96,8 +96,6 @@ class NPS extends \SoapClient
             ];
             $response = $this->__soapCall('createOrder', $body);
             return new OrderResponse($response);
-        } else {
-            return ['ERROR' => $this->error];
         }
     }
 
@@ -121,49 +119,44 @@ class NPS extends \SoapClient
                     if(empty($difference)) {
                         // Need to have a reference and reference need to be alphanumeric
                         if(!$item['reference']){ 
-                            $this->error = 'The reference is invalid';
+                            throw new InvalidArgumentException('The reference is invalid');
                             break;
                         }
                         // Need to have a makerCode and makerCode need to exists
                         if(!$item['makerCode'] || !$this->isMakerCodeExist($item['makerCode']) ) {
-                            $this->error = "The 'makerCode' field is invalid";
+                            throw new InvalidArgumentException("The 'makerCode' field is invalid");
                             break;
                         }
                         // Need to have a positionNumber and positionNumber need to be an integer
                         if(!$item['positionNumber'] || !is_int($item['positionNumber'])) {
-                            $this->error = "The 'positionNumber' field is invalid";
+                            throw new InvalidArgumentException("The 'positionNumber' field is invalid");
                             break;
                         }
                         // requestedQuantity need to be an integer
                         if(!is_int($item['requestedQuantity'])) {
-                            $this->error = "The 'requestedQuantity' field is invalid";
+                            throw new InvalidArgumentException("The 'requestedQuantity' field is invalid");
                             break;
                         }
     
                         // requestedQuantity can't be equal to 0
                         if($item['requestedQuantity'] == 0) {
-                            $this->error = "The 'requestedQuantity' field only accepts numbers greater than 0";
+                            throw new InvalidArgumentException("The 'requestedQuantity' field only accepts numbers greater than 0");
                             break;
                         }
                     } else {
                         $missingFieldsImplode = implode("', '", array_keys($difference));
-                        $this->error = "'{$missingFieldsImplode}' field(s) are missing from the items list";
+                        throw new InvalidArgumentException("'{$missingFieldsImplode}' field(s) are missing from the items list");
                         break;
                     }
                 } else {
-                    $this->error = "Your product array can only contain arrays containing a product's information";
+                    throw new InvalidArgumentException("Your product array can only contain arrays containing a product's information");
                     break;
                 }
             }
         } else {
-            $this->error = "The items list can not be empty";
+            throw new InvalidArgumentException("The items list can not be empty");
         }
-
-        if ($this->error) {
-            return false;
-        } else {
-            return true;
-        }
+        return true;
     }
 
     // Verify if makerCode exist
@@ -184,14 +177,9 @@ class NPS extends \SoapClient
     {
         $pattern = '/^C(01|ND)[0-9A-Z]{5}$/';
         if(!preg_match($pattern, $testId)) {
-            $this->error = "The 'customerId' field is invalid";
+            throw new InvalidArgumentException("The 'customerId' field is invalid");
         }
-        
-        if ($this->error) {
-            return false;
-        } else {
-            return true;
-        }
+        return true;
     }
 
     // DeliveryId verification to pass an order
@@ -199,14 +187,10 @@ class NPS extends \SoapClient
     {
         $pattern = '/^(C\d{2}|LIV[A-Z]{2}|L\d{4})$/';
         if(!preg_match($pattern, $testId)) {
-            $this->error = "The 'deliveryId' field is invalid";
+            throw new InvalidArgumentException("The 'deliveryId' field is invalid");
         }
         
-        if ($this->error) {
-            return false;
-        } else {
-            return true;
-        }
+        return true;
     }
 
     // Verify array with address informations
@@ -218,20 +202,17 @@ class NPS extends \SoapClient
 
         if (!empty($difference)) {
             $missingFieldsImplode = implode("', '", array_keys($difference));
-            $this->error = "'{$missingFieldsImplode}' field(s) are missing from one of your addresses";
+            throw new InvalidArgumentException("'{$missingFieldsImplode}' field(s) are missing from one of your addresses");
         } else {
             foreach ($addressInfos as $field => $value) {
                 if (!is_string($value)) {
-                    $this->error = "The '{$field}' field must be a string.";
+                    throw new InvalidArgumentException("The '{$field}' field must be a string.");
                     break;
                 }
             }
         }
-
-        if ($this->error) {
-            return false;
-        } else {
-            return true;
-        }
+        return true;
     }
+
+    
 }
