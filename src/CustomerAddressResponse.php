@@ -13,6 +13,7 @@ class CustomerAddressResponse {
     private $street1;
     private $street2;
     private $postalCode;
+    private $city;
     private $countryIsoCode;
     private $countryName;
 
@@ -23,6 +24,7 @@ class CustomerAddressResponse {
         $this->street1 = $data->street1;
         $this->street2 = $data->street2;
         $this->postalCode = $data->postalCode;
+        $this->city = $data->city;
         $this->countryIsoCode = $data->countryIsoCode;
         $this->countryName = $data->countryName;
     }
@@ -49,6 +51,10 @@ class CustomerAddressResponse {
 
     public function getPostalCode() {
         return $this->postalCode;
+    }
+
+    public function getCity() {
+        return $this->city;
     }
 
     public function getCountryIsoCode() {
