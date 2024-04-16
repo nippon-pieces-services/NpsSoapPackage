@@ -12,6 +12,9 @@ use InvalidArgumentException;
 
 class NPS extends \SoapClient
 {
+    private $id;
+    private $password;
+    private $error;
 
     public function __construct(string $wsdl, string $id, string $password) {
 
